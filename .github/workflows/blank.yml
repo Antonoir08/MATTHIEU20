@@ -6,16 +6,16 @@
     <title>Accès sécurisé</title>
     <style>
         body {
-            margin: 0;
-            background: black;
-            color: white;
-            font-family: monospace;
-            text-align: center;
+            margin:0;
+            background:black;
+            color:white;
+            font-family:monospace;
+            text-align:center;
         }
         canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
+            position:fixed;
+            top:0;
+            left:0;
             width: 100%;
             height: 100%;
             z-index: -1;
