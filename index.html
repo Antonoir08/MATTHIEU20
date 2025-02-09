@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accès sécurisé</title>
+    <style>
+        body {
+            margin: 0;
+            background: black;
+            color: white;
+            font-family: monospace;
+            text-align: center;
+        }
+        canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        #login {
+            margin-top: 20vh;
+        }
+        input {
+            padding: 10px;
+            font-size: 1.2em;
+            border: none;
+            outline: none;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 1.2em;
+            cursor: pointer;
+        }
+        #loading {
+            display: none;
+            margin-top: 20vh;
+            font-size: 1.5em;
+        }
+        #content {
+            display: none;
+        }
+        .typing {
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 2em;
+            display: inline-block;
+        }
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            background-color: #0F0;
+            animation: blink 0.7s infinite;
+        }
+        @keyframes blink {
+            from, to { opacity: 0 }
+            50% { opacity: 1 }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix"></canvas>
+    <div id="login">
+        <h1>Entrez le mot de passe</h1>
+        <input type="password" id="password" placeholder="Mot de passe">
+        <button onclick="checkPassword()">Valider</button>
+    </div>
+    <div id="loading">
+        <p>Chargement...</p>
+    </div>
+    <script>
+        const correctPassword = "MATTHIEU20";
+        function checkPassword() {
+            const input = document.getElementById("password").value;
+            if (input === correctPassword) {
+                document.getElementById("login").style.display = "none";
+                document.getElementById("loading").style.display = "block";
+                changeMatrixToWords();
+                setTimeout(showFinalScreen, 6000);
+            } else {
+                alert("Mot de passe incorrect !");
+            }
+        }
+        
+        const canvas = document.getElementById("matrix");
+        const ctx = canvas.getContext("2d");
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        const randomChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()".split("");
+        const words = ["MATTHIEU", "STREET WORKOUT", "PIANO", "BASSON", "SFX1", "GIN", "HOCKEY", "LOUVETEAUX", "INGÉNIEUR", "ARMÉE", "ART", "ENGAGEMENT", "TOURNOI D'ÉLOQUENCE", "AGENT SECRET", "BEN10", "MATRIX", "KETUPA", "INDIANA JONES"];
+        let letters = randomChars;
+        const fontSize = 20;
+        const columns = Math.floor(canvas.width / fontSize);
+        const drops = Array(columns).fill(0);
+        
+        function drawMatrix() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#0F0";
+            ctx.font = `${fontSize}px monospace`;
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(drawMatrix, 50);
+        
+        function changeMatrixToWords() {
+            letters = words;
+        }
+        
+        function showFinalScreen() {
+            document.body.innerHTML = `<div style='color:#0F0; font-family:monospace; text-align:center; font-size:2em; padding-top:20vh;'>
+                <p id='typing-text'></p><span class='cursor'>&nbsp;</span>
+            </div>`;
+            
+            const textLines = [
+                "VENDREDI 7 MARS 2025",
+                "DÈS 19:30",
+                "RENDEZ-VOUS AU QG",
+                "RUE JEAN GOME 38",
+                "EN AGENT SECRET"
+            ];
+            let currentLine = 0;
+            let currentText = "";
+            const typingElement = document.getElementById("typing-text");
+            
+            function typeText() {
+                if (currentLine < textLines.length) {
+                    if (currentText.length < textLines[currentLine].length) {
+                        currentText += textLines[currentLine][currentText.length];
+                        typingElement.innerHTML = currentText;
+                        setTimeout(typeText, 100);
+                    } else {
+                        currentText = "";
+                        currentLine++;
+                        typingElement.innerHTML += "<br>";
+                        setTimeout(typeText, 500);
+                    }
+                }
+            }
+            
+            typeText();
+        }
+    </script>
+</body>
+</html>
